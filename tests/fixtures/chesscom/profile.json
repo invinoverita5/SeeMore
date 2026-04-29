@@ -1,0 +1,12 @@
+{
+  "@id": "https://api.chess.com/pub/player/testuser",
+  "url": "https://www.chess.com/member/TestUser",
+  "username": "TestUser",
+  "player_id": 12345,
+  "status": "premium",
+  "country": "https://api.chess.com/pub/country/US",
+  "joined": 1609459200,
+  "last_online": 1705307200,
+  "followers": 42
+}
+

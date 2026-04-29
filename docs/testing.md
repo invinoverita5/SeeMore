@@ -36,7 +36,7 @@ The repository CI must:
 
 - Run on every pull request.
 - Run on pushes to `main`.
-- Require repository guidance files to exist.
+- Require repository guidance files to exist and be non-empty.
 - Run lint, typecheck, and tests for any stack with committed source code.
 - Fail when source files exist but CI does not know how to verify that stack.
 - Avoid live provider calls by default.

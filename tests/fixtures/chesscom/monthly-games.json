@@ -1,0 +1,92 @@
+{
+  "games": [
+    {
+      "url": "https://www.chess.com/game/live/1001",
+      "pgn": "[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2024.01.15\"]\n[White \"TestUser\"]\n[Black \"OpponentOne\"]\n[Result \"1-0\"]\n[ECOUrl \"https://www.chess.com/openings/Sicilian-Defense-Najdorf-Variation\"]\n[UTCDate \"2024.01.15\"]\n[UTCTime \"08:26:40\"]\n\n1. e4 c5 2. Nf3 d6 3. d4 cxd4 4. Nxd4 Nf6 5. Nc3 a6 1-0",
+      "time_control": "300",
+      "end_time": 1705307200,
+      "rated": true,
+      "time_class": "blitz",
+      "rules": "chess",
+      "white": {
+        "username": "TestUser",
+        "rating": 1350,
+        "result": "win",
+        "@id": "https://api.chess.com/pub/player/testuser",
+        "uuid": "00000000-0000-0000-0000-000000000001"
+      },
+      "black": {
+        "username": "OpponentOne",
+        "rating": 1288,
+        "result": "resigned",
+        "@id": "https://api.chess.com/pub/player/opponentone",
+        "uuid": "00000000-0000-0000-0000-000000000002"
+      }
+    },
+    {
+      "url": "https://www.chess.com/game/live/1002",
+      "pgn": "[Event \"Live Chess\"]\n[Site \"Chess.com\"]\n[Date \"2024.01.16\"]\n[White \"OpponentTwo\"]\n[Black \"TestUser\"]\n[Result \"1-0\"]\n[Opening \"Italian Game: Two Knights Defense\"]\n[UTCDate \"2024.01.16\"]\n[UTCTime \"18:44:11\"]\n\n1. e4 e5 2. Nf3 Nc6 3. Bc4 Nf6 4. Ng5 d5 5. exd5 Nxd5 6. Nxf7 Kxf7 7. Qf3+ Ke6 8. Nc3 Nce7 9. O-O c6 10. d4 exd4 11. Re1+ Kd6 12. Bf4+ Kc5 13. Na4+ Kxc4 14. Qb3# 1-0",
+      "time_control": "600",
+      "end_time": 1705430651,
+      "rated": true,
+      "time_class": "rapid",
+      "rules": "chess",
+      "white": {
+        "username": "OpponentTwo",
+        "rating": 1440,
+        "result": "win",
+        "@id": "https://api.chess.com/pub/player/opponenttwo",
+        "uuid": "00000000-0000-0000-0000-000000000003"
+      },
+      "black": {
+        "username": "TestUser",
+        "rating": 1402,
+        "result": "checkmated",
+        "@id": "https://api.chess.com/pub/player/testuser",
+        "uuid": "00000000-0000-0000-0000-000000000001"
+      }
+    },
+    {
+      "url": "https://www.chess.com/game/daily/1003",
+      "pgn": "[Event \"Daily Chess\"]\n[Site \"Chess.com\"]\n[Date \"2024.01.17\"]\n[White \"TestUser\"]\n[Black \"OpponentThree\"]\n[Result \"1/2-1/2\"]\n[ECOUrl \"https://www.chess.com/openings/Queens-Pawn-Opening-Zukertort-Variation\"]\n[UTCDate \"2024.01.17\"]\n[UTCTime \"12:00:00\"]\n\n1. d4 Nf6 2. Nf3 e6 3. e3 b6 4. Bd3 Bb7 5. O-O Be7 1/2-1/2",
+      "time_control": "1/259200",
+      "end_time": 1705492800,
+      "rated": false,
+      "time_class": "daily",
+      "rules": "chess",
+      "white": {
+        "username": "TestUser",
+        "rating": 1510,
+        "result": "stalemate",
+        "@id": "https://api.chess.com/pub/player/testuser",
+        "uuid": "00000000-0000-0000-0000-000000000001"
+      },
+      "black": {
+        "username": "OpponentThree",
+        "rating": 1499,
+        "result": "stalemate",
+        "@id": "https://api.chess.com/pub/player/opponentthree",
+        "uuid": "00000000-0000-0000-0000-000000000004"
+      }
+    },
+    {
+      "url": "https://www.chess.com/game/live/1004",
+      "pgn": "[Event \"Chess960\"]\n[Site \"Chess.com\"]\n[Date \"2024.01.18\"]\n[White \"TestUser\"]\n[Black \"OpponentFour\"]\n[Result \"1-0\"]\n\n1. g3 d5 2. Bg2 c6 1-0",
+      "time_control": "180",
+      "end_time": 1705579200,
+      "rated": true,
+      "time_class": "blitz",
+      "rules": "chess960",
+      "white": {
+        "username": "TestUser",
+        "rating": 1500,
+        "result": "win"
+      },
+      "black": {
+        "username": "OpponentFour",
+        "rating": 1500,
+        "result": "resigned"
+      }
+    }
+  ]
+}

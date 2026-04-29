@@ -1,0 +1,19 @@
+{
+  "name": "@chessinsights/importer",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "npm --prefix ../.. run lint",
+    "typecheck": "npm --prefix ../.. run typecheck",
+    "test": "npm --prefix ../.. run test"
+  },
+  "dependencies": {
+    "@chessinsights/chesscom-client": "file:../chesscom-client",
+    "@chessinsights/domain": "file:../domain"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}
+

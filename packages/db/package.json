@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "lint": "npm --prefix ../.. run lint",
-    "prisma:validate": "PRISMA_HIDE_UPDATE_MESSAGE=true DATABASE_URL=${DATABASE_URL:-postgresql://chessinsights:chessinsights@localhost:5432/chessinsights} prisma validate --schema prisma/schema.prisma",
+    "prisma:validate": "PRISMA_HIDE_UPDATE_MESSAGE=true DATABASE_URL=${DATABASE_URL:-postgresql://localhost:5432/chessinsights} prisma validate --schema prisma/schema.prisma",
     "typecheck": "npm --prefix ../.. run typecheck",
     "test": "npm --prefix ../.. run test"
   },

@@ -114,7 +114,7 @@ model Game {
   id                     String          @id @default(cuid())
   playerId               String
   rawGameId              String?         @unique
-  gameUrl                String          @unique
+  gameUrl                String
   opponentUsername       String
   playerColor            GamePlayerColor
   playerRating           Int?
@@ -138,6 +138,7 @@ model Game {
   player                 Player          @relation(fields: [playerId], references: [id], onDelete: Cascade)
   rawGame                RawGame?        @relation(fields: [rawGameId], references: [id], onDelete: SetNull)
 
+  @@unique([playerId, gameUrl])
   @@index([playerId, timeClass, playedAt])
   @@index([playerId, opponentRating])
   @@index([playerId, openingFamily, timeClass])
@@ -214,7 +215,7 @@ model RawGame {
   id             String   @id @default(cuid())
   playerId       String
   archiveId      String
-  gameUrl        String   @unique
+  gameUrl        String
   pgn            String
   raw            Json
   checksum       String
@@ -223,6 +224,7 @@ model RawGame {
   normalizedGame Game?
   player         Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
 
+  @@unique([playerId, gameUrl])
   @@index([playerId, archiveId])
   @@index([checksum])
 }

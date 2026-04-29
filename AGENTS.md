@@ -4,7 +4,7 @@ This repository is designed for a simple, durable loop:
 
 GitHub Issue -> Codex implements in a branch or worktree -> Pull Request ->
 GitHub Actions hard gate -> CodeRabbit review -> Codex fixes comments ->
-human merge authority.
+GitHub auto-merge after required checks pass.
 
 ## Core Rules
 
@@ -29,7 +29,9 @@ human merge authority.
 - Treat CodeRabbit as the reviewer for PR-level bug, test, maintainability, and
   security feedback.
 - Address actionable CodeRabbit comments with narrow commits and rerun CI.
-- Leave merge authority with the human owner.
+- Leave merge authority with the protected `main` ruleset: required CI,
+  required CodeRabbit status, conversation resolution, and auto-merge.
+- Preserve auto-merge once branch protection requirements are in place.
 
 ## ChessInsights Product Direction
 

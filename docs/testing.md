@@ -48,17 +48,19 @@ runner.
 ## Branch Protection
 
 Configure GitHub branch protection or repository rulesets outside the repo so
-`main` cannot be updated until CI passes.
+`main` cannot be updated until CI and CodeRabbit pass.
 
 Recommended settings:
 
 - Require pull requests before merging.
 - Require the `CI` workflow to pass.
-- Require review by the human merge authority.
-- Dismiss stale approvals when new commits are pushed.
+- Require the `CodeRabbit` status to pass.
+- Require zero human approvals.
+- Require conversation resolution before merging.
 - Do not allow direct pushes to `main`.
 - Do not allow administrators to bypass the rule unless an emergency process is
   documented.
+- Enable auto-merge so GitHub merges PRs after required checks pass.
 
 ## Test Pyramid
 
@@ -140,6 +142,6 @@ Every PR should include:
 PRs should not merge until:
 
 - GitHub Actions passes.
-- Actionable CodeRabbit comments are addressed or explicitly deferred by the
-  human merge authority.
-- The human owner has reviewed the final scope.
+- CodeRabbit passes.
+- Actionable CodeRabbit comments are addressed.
+- GitHub branch protection/rulesets mark the PR mergeable.

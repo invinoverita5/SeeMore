@@ -1,0 +1,21 @@
+{
+  "name": "@chessinsights/db",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "lint": "npm --prefix ../.. run lint",
+    "prisma:validate": "PRISMA_HIDE_UPDATE_MESSAGE=true DATABASE_URL=${DATABASE_URL:-postgresql://chessinsights:chessinsights@localhost:5432/chessinsights} prisma validate --schema prisma/schema.prisma",
+    "typecheck": "npm --prefix ../.. run typecheck",
+    "test": "npm --prefix ../.. run test"
+  },
+  "dependencies": {
+    "@chessinsights/domain": "file:../domain"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.3"
+  },
+  "exports": {
+    ".": "./src/index.ts"
+  }
+}

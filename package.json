@@ -7,6 +7,7 @@
     "packages/*"
   ],
   "scripts": {
+    "db:validate": "npm --workspace @chessinsights/db run prisma:validate",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "test": "vitest run"

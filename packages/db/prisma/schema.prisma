@@ -74,7 +74,7 @@ model AggregateSnapshot {
   playerId     String
   kind         AggregateKind
   timeClass    GameTimeClass?
-  timeClassKey String         @default("all")
+  timeClassKey String
   filterHash   String
   payload      Json
   recordCount  Int

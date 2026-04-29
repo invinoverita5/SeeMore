@@ -124,7 +124,7 @@ function readResponseMetadata(url: string, response: Response): ProviderResponse
 }
 
 function classifyErrorStatus(status: number): ProviderErrorKind {
-  if (status === 301 || status === 302 || status === 307 || status === 308) {
+  if (status === 301 || status === 302 || status === 303 || status === 307 || status === 308) {
     return "redirect";
   }
 

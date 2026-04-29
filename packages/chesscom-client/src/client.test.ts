@@ -31,13 +31,12 @@ function mockFetch(response: Response): { readonly calls: MockFetchCall[]; reado
 }
 
 function jsonResponse(body: unknown, init: ResponseInit = {}): Response {
+  const headers = new Headers(init.headers);
+  headers.set("Content-Type", "application/json");
+
   return new Response(JSON.stringify(body), {
-    status: 200,
-    headers: {
-      "Content-Type": "application/json",
-      ...init.headers
-    },
-    ...init
+    ...init,
+    headers
   });
 }
 
@@ -141,6 +140,7 @@ describe("Chess.com PubAPI client", () => {
   });
 
   it.each([
+    [303, "redirect"],
     [404, "not_found"],
     [410, "gone"],
     [429, "rate_limited"]

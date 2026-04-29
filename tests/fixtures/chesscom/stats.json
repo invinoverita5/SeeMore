@@ -1,0 +1,27 @@
+{
+  "chess_blitz": {
+    "last": {
+      "rating": 1350,
+      "date": 1705307200,
+      "rd": 50
+    },
+    "record": {
+      "win": 120,
+      "loss": 100,
+      "draw": 15
+    }
+  },
+  "chess_rapid": {
+    "last": {
+      "rating": 1402,
+      "date": 1705430651,
+      "rd": 44
+    },
+    "record": {
+      "win": 60,
+      "loss": 45,
+      "draw": 12
+    }
+  }
+}
+

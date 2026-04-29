@@ -114,6 +114,11 @@ jobs:
           done
 
           case " $scripts " in
+            *" db:validate "*) "$pm" run db:validate ;;
+            *) echo "No db:validate script defined; skipping database schema validation." ;;
+          esac
+
+          case " $scripts " in
             *" build "*) "$pm" run build ;;
             *) echo "No build script defined; skipping build." ;;
           esac

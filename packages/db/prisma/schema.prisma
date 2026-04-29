@@ -1,0 +1,230 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum AggregateKind {
+  opening_summary
+  opponent_rating_buckets
+  rating_timeline
+  result_breakdown
+  time_class_breakdown
+}
+
+enum ArchiveFetchStatus {
+  failed
+  fetched
+  pending
+  skipped
+}
+
+enum GameEnding {
+  abandoned
+  agreement
+  checkmate
+  fifty_move
+  insufficient_material
+  repetition
+  resignation
+  stalemate
+  timeout
+  time_vs_insufficient_material
+  unknown
+}
+
+enum GamePlayerColor {
+  black
+  white
+}
+
+enum GameResult {
+  draw
+  loss
+  win
+}
+
+enum GameTimeClass {
+  blitz
+  bullet
+  daily
+  rapid
+}
+
+enum ImportJobStatus {
+  canceled
+  completed
+  failed
+  queued
+  running
+}
+
+enum ProviderResponseKind {
+  archive_list
+  monthly_archive
+  player_profile
+  player_stats
+}
+
+model AggregateSnapshot {
+  id           String         @id @default(cuid())
+  playerId     String
+  kind         AggregateKind
+  timeClass    GameTimeClass?
+  timeClassKey String
+  filterHash   String
+  payload      Json
+  recordCount  Int
+  computedAt   DateTime       @default(now())
+  createdAt    DateTime       @default(now())
+  player       Player         @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, kind, timeClassKey, filterHash])
+  @@index([playerId, kind, computedAt])
+}
+
+model Archive {
+  id                 String             @id @default(cuid())
+  playerId           String
+  year               Int
+  month              Int
+  url                String             @unique
+  status             ArchiveFetchStatus @default(pending)
+  etag               String?
+  lastModified       String?
+  fetchedAt          DateTime?
+  gameCount          Int                @default(0)
+  checksum           String?
+  rawPayload         Json?
+  providerResponseId String?            @unique
+  createdAt          DateTime           @default(now())
+  updatedAt          DateTime           @updatedAt
+  player             Player             @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  providerResponse   ProviderResponse?  @relation(fields: [providerResponseId], references: [id], onDelete: SetNull)
+  rawGames           RawGame[]
+
+  @@unique([playerId, year, month])
+  @@index([playerId, fetchedAt])
+}
+
+model Game {
+  id                     String          @id @default(cuid())
+  playerId               String
+  rawGameId              String?         @unique
+  gameUrl                String
+  opponentUsername       String
+  playerColor            GamePlayerColor
+  playerRating           Int?
+  opponentRating         Int?
+  timeClass              GameTimeClass
+  result                 GameResult
+  ending                 GameEnding
+  rawPlayerResult        String
+  rawOpponentResult      String
+  rawRules               String
+  rawTimeClass           String
+  openingName            String
+  openingFamily          String
+  openingTaxonomyVersion String
+  playedAt               DateTime?
+  moveCount              Int
+  plyCount               Int
+  rated                  Boolean?
+  createdAt              DateTime        @default(now())
+  updatedAt              DateTime        @updatedAt
+  player                 Player          @relation(fields: [playerId], references: [id], onDelete: Cascade)
+  rawGame                RawGame?        @relation(fields: [rawGameId], references: [id], onDelete: SetNull)
+
+  @@unique([playerId, gameUrl])
+  @@index([playerId, timeClass, playedAt])
+  @@index([playerId, opponentRating])
+  @@index([playerId, openingFamily, timeClass])
+  @@index([playerId, result, timeClass])
+  @@index([playedAt])
+}
+
+model ImportJob {
+  id                  String          @id @default(cuid())
+  playerId            String?
+  requestedUsername   String
+  usernameKey         String
+  status              ImportJobStatus @default(queued)
+  archiveCount        Int             @default(0)
+  fetchedArchiveCount Int             @default(0)
+  recordCount         Int             @default(0)
+  skippedGameCount    Int             @default(0)
+  skippedArchiveUrls  Json?
+  errorCode           String?
+  errorMessage        String?
+  startedAt           DateTime?
+  completedAt         DateTime?
+  createdAt           DateTime        @default(now())
+  updatedAt           DateTime        @updatedAt
+  player              Player?         @relation(fields: [playerId], references: [id], onDelete: SetNull)
+
+  @@index([usernameKey, createdAt])
+  @@index([status, createdAt])
+}
+
+model Player {
+  id                 String              @id @default(cuid())
+  chessComUsername   String
+  usernameKey        String              @unique
+  chessComPlayerId   BigInt?             @unique
+  avatarUrl          String?
+  profileUrl         String?
+  status             String?
+  countryUrl         String?
+  lastImportedAt     DateTime?
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @updatedAt
+  aggregateSnapshots AggregateSnapshot[]
+  archives           Archive[]
+  games              Game[]
+  importJobs         ImportJob[]
+  providerResponses  ProviderResponse[]
+  rawGames           RawGame[]
+
+  @@index([lastImportedAt])
+}
+
+model ProviderResponse {
+  id              String               @id @default(cuid())
+  playerId        String?
+  kind            ProviderResponseKind
+  url             String
+  statusCode      Int
+  requestHeaders  Json?
+  responseHeaders Json?
+  etag            String?
+  lastModified    String?
+  body            Json?
+  checksum        String?
+  fetchedAt       DateTime             @default(now())
+  archive         Archive?
+  player          Player?              @relation(fields: [playerId], references: [id], onDelete: SetNull)
+
+  @@index([playerId, kind, fetchedAt])
+  @@index([url, fetchedAt])
+}
+
+model RawGame {
+  id             String   @id @default(cuid())
+  playerId       String
+  archiveId      String
+  gameUrl        String
+  pgn            String
+  raw            Json
+  checksum       String
+  fetchedAt      DateTime @default(now())
+  archive        Archive  @relation(fields: [archiveId], references: [id], onDelete: Cascade)
+  normalizedGame Game?
+  player         Player   @relation(fields: [playerId], references: [id], onDelete: Cascade)
+
+  @@unique([playerId, gameUrl])
+  @@index([playerId, archiveId])
+  @@index([checksum])
+}

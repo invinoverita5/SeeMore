@@ -9,10 +9,15 @@ describe("opening family mapping", () => {
     );
   });
 
+  it("sanitizes fallback path segments when URL parsing fails", () => {
+    expect(openingNameFromUrl("/openings/Sicilian-Defense-Dragon-Variation?ref=game")).toBe(
+      "Sicilian Defense Dragon Variation"
+    );
+  });
+
   it("reduces detailed variations to broad opening families", () => {
     expect(toOpeningFamily("Sicilian Defense Najdorf Variation")).toBe("Sicilian Defense");
     expect(toOpeningFamily("Queen's Gambit Declined: Albin Countergambit")).toBe("Queen's Gambit");
     expect(toOpeningFamily("Italian Game: Two Knights Defense")).toBe("Italian Game");
   });
 });
-

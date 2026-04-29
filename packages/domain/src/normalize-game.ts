@@ -1,5 +1,5 @@
 import { extractOpeningName, toOpeningFamily } from "./opening-family.js";
-import { countFullMovesFromPgn, countPlyFromPgn, readPgnHeader } from "./pgn.js";
+import { countPlyFromPgn, readPgnHeader } from "./pgn.js";
 import { classifyEnding, mapResultCode } from "./result-map.js";
 import { classifyTimeClass } from "./time-class.js";
 import type { ChessComGame, ChessComSide, NormalizedGameRecord, PlayerColor } from "./types.js";
@@ -23,6 +23,7 @@ export function normalizeChessComGame(game: ChessComGame, username: string): Nor
   const opponentResult = perspective.opponent.result;
   const openingName = extractOpeningName(game.pgn, game.eco);
   const plyCount = countPlyFromPgn(game.pgn);
+  const moveCount = Math.ceil(plyCount / 2);
 
   return {
     gameUrl: game.url,
@@ -41,7 +42,7 @@ export function normalizeChessComGame(game: ChessComGame, username: string): Nor
     openingName,
     openingFamily: toOpeningFamily(openingName),
     playedAt: getPlayedAt(game),
-    moveCount: countFullMovesFromPgn(game.pgn),
+    moveCount,
     plyCount,
     rated: game.rated ?? null
   };
@@ -81,7 +82,11 @@ function normalizeUsername(username: string): string {
 
 function getPlayedAt(game: ChessComGame): string | null {
   if (game.end_time !== undefined) {
-    return new Date(game.end_time * 1000).toISOString();
+    const epochDate = new Date(game.end_time * 1000);
+
+    if (!Number.isNaN(epochDate.getTime())) {
+      return epochDate.toISOString();
+    }
   }
 
   const utcDate = readPgnHeader(game.pgn, "UTCDate") ?? readPgnHeader(game.pgn, "Date");
@@ -100,4 +105,3 @@ function getPlayedAt(game: ChessComGame): string | null {
 
   return parsedDate.toISOString();
 }
-

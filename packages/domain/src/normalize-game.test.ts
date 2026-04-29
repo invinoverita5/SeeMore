@@ -16,8 +16,10 @@ interface MonthlyGamesFixture {
   readonly games: ChessComGame[];
 }
 
+const cachedFixture = JSON.parse(readFileSync(fixturePath, "utf8")) as MonthlyGamesFixture;
+
 function loadFixture(): MonthlyGamesFixture {
-  return JSON.parse(readFileSync(fixturePath, "utf8")) as MonthlyGamesFixture;
+  return cachedFixture;
 }
 
 function fixtureGame(index: number): ChessComGame {

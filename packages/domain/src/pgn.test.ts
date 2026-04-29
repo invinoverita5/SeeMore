@@ -16,10 +16,10 @@ describe("PGN helpers", () => {
   it("counts mainline plies while ignoring comments, annotations, variations, and result tokens", () => {
     const pgn = `[Event "Live Chess"]
 
-1. e4! {mainline} e5 (1... c5 2. Nf3) 2. Nf3 $1 Nc6 3. Bb5 a6 1-0`;
+1. e4! {mainline} e5 ; ignored line comment
+(1... c5 2. Nf3) 2. Nf3 $1 Nc6 3. Bb5 a6 1-0`;
 
     expect(countPlyFromPgn(pgn)).toBe(6);
     expect(countFullMovesFromPgn(pgn)).toBe(3);
   });
 });
-

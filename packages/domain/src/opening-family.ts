@@ -61,9 +61,16 @@ export function openingNameFromUrl(url: string): string {
       return UNKNOWN_OPENING;
     }
 
-    return normalizeOpeningLabel(decodeURIComponent(lastSegment).replace(/-/g, " "));
+    return openingNameFromPathSegment(lastSegment);
   } catch {
-    return normalizeOpeningLabel(url.replace(/-/g, " "));
+    const rawPath = url.split(/[?#]/)[0] ?? "";
+    const fallbackSegment = rawPath.split("/").filter(Boolean).at(-1);
+
+    if (fallbackSegment === undefined) {
+      return UNKNOWN_OPENING;
+    }
+
+    return openingNameFromPathSegment(fallbackSegment);
   }
 }
 
@@ -89,6 +96,14 @@ export function toOpeningFamily(openingName: string): string {
 function normalizeOpeningLabel(openingName: string): string {
   const normalizedOpeningName = openingName.replace(/\s+/g, " ").trim();
   return normalizedOpeningName.length === 0 ? UNKNOWN_OPENING : normalizedOpeningName;
+}
+
+function openingNameFromPathSegment(pathSegment: string): string {
+  try {
+    return normalizeOpeningLabel(decodeURIComponent(pathSegment).replace(/-/g, " "));
+  } catch {
+    return normalizeOpeningLabel(pathSegment.replace(/-/g, " "));
+  }
 }
 
 function normalizeForSearch(openingName: string): string {

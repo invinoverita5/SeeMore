@@ -3,6 +3,14 @@ import { describe, expect, it } from "vitest";
 import { classifyEnding, mapResultCode } from "./result-map.js";
 
 describe("result mapping", () => {
+  it.each([
+    [" WIN ", "win"],
+    [" Resigned ", "loss"],
+    [" Stalemate ", "draw"]
+  ] as const)("normalizes %s before mapping", (resultCode, expectedResult) => {
+    expect(mapResultCode(resultCode)).toBe(expectedResult);
+  });
+
   it("keeps Chess.com wins as wins", () => {
     expect(mapResultCode("win")).toBe("win");
   });
@@ -27,4 +35,3 @@ describe("result mapping", () => {
     expect(classifyEnding("stalemate", "stalemate")).toBe("stalemate");
   });
 });
-

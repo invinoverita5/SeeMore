@@ -109,15 +109,21 @@ function normalizeUsername(rawUsername: string): string {
 function parseTimeClass(searchParams: URLSearchParams, key: "ratingTimeClass" | "timeClass"): TimeClass | undefined {
   const value = searchParams.get(key);
 
-  if (value === null || value.trim().length === 0 || value === "all") {
+  if (value === null) {
     return undefined;
   }
 
-  if (!TIME_CLASSES.has(value as TimeClass)) {
+  const normalizedValue = value.trim().toLowerCase();
+
+  if (normalizedValue.length === 0 || normalizedValue === "all") {
+    return undefined;
+  }
+
+  if (!TIME_CLASSES.has(normalizedValue as TimeClass)) {
     throw new AnalyzeRequestError(`${key} must be one of bullet, blitz, rapid, or daily.`);
   }
 
-  return value as TimeClass;
+  return normalizedValue as TimeClass;
 }
 
 function parsePositiveInteger(

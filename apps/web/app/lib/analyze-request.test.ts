@@ -8,8 +8,8 @@ describe("parseAnalyzeSearchParams", () => {
     const parsed = parseAnalyzeSearchParams(
       new URLSearchParams({
         username: " TestUser ",
-        timeClass: "rapid",
-        ratingTimeClass: "blitz",
+        timeClass: " Rapid ",
+        ratingTimeClass: "BLITZ",
         openingLimit: "7",
         opponentRatingBucketSize: "200"
       })
@@ -21,6 +21,20 @@ describe("parseAnalyzeSearchParams", () => {
       ratingTimeClass: "blitz",
       openingLimit: 7,
       opponentRatingBucketSize: 200
+    });
+  });
+
+  it("treats blank and all time-class filters as unfiltered", () => {
+    const parsed = parseAnalyzeSearchParams(
+      new URLSearchParams({
+        username: "testuser",
+        timeClass: " all ",
+        ratingTimeClass: "ALL"
+      })
+    );
+
+    expect(parsed).toEqual({
+      username: "testuser"
     });
   });
 

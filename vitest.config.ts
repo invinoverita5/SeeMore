@@ -1,8 +1,13 @@
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
+  oxc: {
+    jsx: {
+      importSource: "react",
+      runtime: "automatic"
+    }
+  },
   test: {
-    include: ["packages/**/*.test.ts", "tests/**/*.test.ts"]
+    include: ["apps/**/*.test.ts", "packages/**/*.test.ts", "tests/**/*.test.ts"]
   }
 });
-

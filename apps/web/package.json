@@ -1,0 +1,26 @@
+{
+  "name": "@chessinsights/web",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "next build --webpack",
+    "dev": "next dev --webpack",
+    "lint": "npm --prefix ../.. run lint",
+    "typecheck": "tsc --noEmit --project tsconfig.json",
+    "test": "npm --prefix ../.. run test"
+  },
+  "dependencies": {
+    "@chessinsights/analysis": "file:../../packages/analysis",
+    "@chessinsights/chesscom-client": "file:../../packages/chesscom-client",
+    "next": "^16.2.4",
+    "react": "^19.2.5",
+    "react-dom": "^19.2.5"
+  },
+  "devDependencies": {
+    "@testing-library/react": "^16.3.2",
+    "@types/react": "^19.2.14",
+    "@types/react-dom": "^19.2.3",
+    "jsdom": "^29.1.0"
+  }
+}

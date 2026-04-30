@@ -3,16 +3,15 @@ import tseslint from "typescript-eslint";
 
 export default [
   {
-    ignores: ["coverage/", "dist/", "node_modules/"]
+    ignores: ["coverage/", "dist/", "node_modules/", ".next/", "apps/**/.next/"]
   },
   js.configs.recommended,
   ...tseslint.configs.recommended,
   {
-    files: ["**/*.ts"],
+    files: ["**/*.{ts,tsx}"],
     languageOptions: {
       ecmaVersion: "latest",
       sourceType: "module"
     }
   }
 ];
-

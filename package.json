@@ -4,13 +4,20 @@
   "private": true,
   "type": "module",
   "workspaces": [
+    "apps/*",
     "packages/*"
   ],
   "scripts": {
+    "build": "npm --workspace @chessinsights/web run build",
     "db:validate": "npm --workspace @chessinsights/db run prisma:validate",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc --noEmit && npm --workspace @chessinsights/web run typecheck",
     "test": "vitest run"
+  },
+  "overrides": {
+    "next@^16.2.4": {
+      "postcss": "8.5.12"
+    }
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",

@@ -68,6 +68,28 @@ describe("toAnalyzeErrorResponse", () => {
         }
       }
     });
+
+    expect(
+      toAnalyzeErrorResponse(
+        new ChessComApiError("gone", 410, {
+          url: "https://api.chess.com/pub/player/testuser",
+          etag: null,
+          lastModified: null,
+          cacheControl: null,
+          retryAfter: null
+        })
+      )
+    ).toEqual({
+      status: 410,
+      body: {
+        error: {
+          code: "provider_gone",
+          message: "Chess.com player data was not found.",
+          providerKind: "gone",
+          providerStatus: 410
+        }
+      }
+    });
   });
 
   it("maps validation and unexpected errors", () => {

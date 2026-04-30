@@ -38,10 +38,12 @@ export function AnalyzeDashboard() {
     const trimmedUsername = username.trim();
 
     if (trimmedUsername.length === 0) {
+      setAnalysis(null);
       setErrorMessage("Enter a Chess.com username.");
       return;
     }
 
+    setAnalysis(null);
     setIsLoading(true);
     setErrorMessage(null);
 
@@ -65,6 +67,7 @@ export function AnalyzeDashboard() {
 
       setAnalysis(payload.analysis);
     } catch (error) {
+      setAnalysis(null);
       setErrorMessage(error instanceof Error ? error.message : "Analysis failed.");
     } finally {
       setIsLoading(false);

@@ -143,8 +143,12 @@ function parsePositiveInteger(
 }
 
 function providerStatus(error: ChessComApiError): number {
-  if (error.kind === "not_found" || error.kind === "gone") {
+  if (error.kind === "not_found") {
     return 404;
+  }
+
+  if (error.kind === "gone") {
+    return 410;
   }
 
   if (error.kind === "rate_limited") {

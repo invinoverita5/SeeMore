@@ -1,4 +1,4 @@
-import type { NormalizedGameRecord, NormalizedResult, TimeClass } from "@chessinsights/domain";
+import type { NormalizedGameRecord, NormalizedResult, PlayerColor, TimeClass } from "@chessinsights/domain";
 
 import type { ResultBreakdown, ResultCounts, ResultPercentages } from "./types.js";
 
@@ -55,6 +55,17 @@ export function filterByTimeClass(
   return records.filter((record) => record.timeClass === timeClass);
 }
 
+export function filterByPlayerColor(
+  records: readonly NormalizedGameRecord[],
+  playerColor: PlayerColor | undefined
+): NormalizedGameRecord[] {
+  if (playerColor === undefined) {
+    return [...records];
+  }
+
+  return records.filter((record) => record.playerColor === playerColor);
+}
+
 export function compareByCountDescThenNameAsc(
   leftName: string,
   leftCount: number,
@@ -67,4 +78,3 @@ export function compareByCountDescThenNameAsc(
 
   return leftName.localeCompare(rightName);
 }
-

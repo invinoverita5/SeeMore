@@ -12,6 +12,7 @@ export function buildRatingTimeline(
     .map((record) => ({
       playedAt: record.playedAt as string,
       rating: record.playerRating as number,
+      result: record.result,
       gameUrl: record.gameUrl,
       timeClass: record.timeClass
     }))
@@ -27,4 +28,3 @@ function compareTimelinePoints(left: RatingTimelinePoint, right: RatingTimelineP
 
   return left.gameUrl.localeCompare(right.gameUrl);
 }
-

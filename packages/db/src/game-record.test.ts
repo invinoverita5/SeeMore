@@ -46,6 +46,8 @@ describe("database persistence helpers", () => {
       rawOpponentResult: "resigned",
       rawRules: "chess",
       rawTimeClass: "blitz",
+      rawTimeControl: "300",
+      estimatedTimePlayedSeconds: 300,
       openingName: "Sicilian Defense Najdorf Variation",
       openingFamily: "Sicilian Defense",
       openingTaxonomyVersion: DEFAULT_OPENING_TAXONOMY_VERSION,

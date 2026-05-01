@@ -10,6 +10,7 @@ describe("parseAnalyzeSearchParams", () => {
         username: " TestUser ",
         timeClass: " Rapid ",
         ratingTimeClass: "BLITZ",
+        openingPlayerColor: " White ",
         openingLimit: "7",
         opponentRatingBucketSize: "200"
       })
@@ -19,6 +20,7 @@ describe("parseAnalyzeSearchParams", () => {
       username: "testuser",
       timeClass: "rapid",
       ratingTimeClass: "blitz",
+      openingPlayerColor: "white",
       openingLimit: 7,
       opponentRatingBucketSize: 200
     });
@@ -29,7 +31,8 @@ describe("parseAnalyzeSearchParams", () => {
       new URLSearchParams({
         username: "testuser",
         timeClass: " all ",
-        ratingTimeClass: "ALL"
+        ratingTimeClass: "ALL",
+        openingPlayerColor: " all "
       })
     );
 
@@ -48,6 +51,14 @@ describe("parseAnalyzeSearchParams", () => {
         })
       )
     ).toThrow(/timeClass/);
+    expect(() =>
+      parseAnalyzeSearchParams(
+        new URLSearchParams({
+          username: "testuser",
+          openingPlayerColor: "green"
+        })
+      )
+    ).toThrow(/openingPlayerColor/);
     expect(() =>
       parseAnalyzeSearchParams(
         new URLSearchParams({

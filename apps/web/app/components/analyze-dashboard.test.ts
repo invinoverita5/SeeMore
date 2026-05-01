@@ -89,8 +89,30 @@ describe("AnalyzeDashboard", () => {
     });
 
     expect(blitzButton.getAttribute("aria-pressed")).toBe("true");
-    expect(fetchMock.mock.calls[1]?.[0].toString()).toBe("/api/analyze?username=testuser&timeClass=blitz");
+    expect(fetchMock.mock.calls[1]?.[0].toString()).toBe(
+      "/api/analyze?username=testuser&timeClass=blitz&ratingTimeClass=blitz"
+    );
     expect(await screen.findByText("testuser-blitz")).toBeTruthy();
+  });
+
+  it("refetches opening summaries with the selected player color", async () => {
+    const fetchMock = stubFetch();
+    fetchMock.mockResolvedValueOnce(jsonResponse({ analysis: makeAnalysis("testuser") }));
+    fetchMock.mockResolvedValueOnce(jsonResponse({ analysis: makeAnalysis("testuser-white") }));
+
+    render(createElement(AnalyzeDashboard));
+    submitUsername("testuser");
+
+    expect(await screen.findByText("testuser")).toBeTruthy();
+
+    fireEvent.click(screen.getByRole("button", { name: "white" }));
+
+    await waitFor(() => {
+      expect(fetchMock).toHaveBeenCalledTimes(2);
+    });
+
+    expect(fetchMock.mock.calls[1]?.[0].toString()).toBe("/api/analyze?username=testuser&openingPlayerColor=white");
+    expect(await screen.findByText("testuser-white")).toBeTruthy();
   });
 });
 
@@ -167,6 +189,7 @@ function makeAnalysis(username: string): PlayerAnalysis {
     filters: {
       timeClass: null,
       ratingTimeClass: "blitz",
+      openingPlayerColor: null,
       openingLimit: 10,
       opponentRatingBucketSize: 100
     },
@@ -178,6 +201,12 @@ function makeAnalysis(username: string): PlayerAnalysis {
       skippedGameCount: 0
     },
     aggregates: {
+      summary: {
+        totalGames: 3,
+        results: resultBreakdown,
+        estimatedTimePlayedSeconds: 900,
+        skippedEstimatedTimeGames: 0
+      },
       results: resultBreakdown,
       resultsByTimeClass: {
         bullet: emptyResultBreakdown,
@@ -198,6 +227,7 @@ function makeAnalysis(username: string): PlayerAnalysis {
           {
             playedAt: "2024-01-01T00:00:00.000Z",
             rating: 1500,
+            result: "win",
             gameUrl: "https://www.chess.com/game/live/1",
             timeClass: "blitz"
           }
@@ -221,7 +251,33 @@ function makeAnalysis(username: string): PlayerAnalysis {
           counts: resultBreakdown,
           percentages: resultBreakdown.percentages
         }
-      ]
+      ],
+      endingBreakdowns: {
+        wonBy: [
+          {
+            ending: "resignation",
+            label: "Resignation",
+            count: 1,
+            percentage: 100
+          }
+        ],
+        lostBy: [
+          {
+            ending: "checkmate",
+            label: "Checkmate",
+            count: 1,
+            percentage: 100
+          }
+        ],
+        drawnBy: [
+          {
+            ending: "stalemate",
+            label: "Stalemate",
+            count: 1,
+            percentage: 100
+          }
+        ]
+      }
     }
   };
 }

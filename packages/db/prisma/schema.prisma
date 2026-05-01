@@ -125,7 +125,9 @@ model Game {
   rawPlayerResult        String
   rawOpponentResult      String
   rawRules               String
-  rawTimeClass           String
+  rawTimeClass                String
+  rawTimeControl              String
+  estimatedTimePlayedSeconds Int?
   openingName            String
   openingFamily          String
   openingTaxonomyVersion String

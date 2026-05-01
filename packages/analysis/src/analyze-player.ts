@@ -1,12 +1,14 @@
 import {
+  buildEndingBreakdowns,
   buildOpeningSummary,
   buildOpponentRatingBuckets,
+  buildPlayerSummary,
   buildRatingTimeline,
   buildResultBreakdown,
   buildTimeClassBreakdown,
   getMostPlayedTimeClass
 } from "@chessinsights/analytics";
-import type { TimeClass } from "@chessinsights/domain";
+import type { PlayerColor, TimeClass } from "@chessinsights/domain";
 import { importChessComPlayer } from "@chessinsights/importer";
 import type { ChessComImportClient, ChessComImportResult } from "@chessinsights/importer";
 
@@ -17,6 +19,9 @@ const DEFAULT_OPENING_LIMIT = 10;
 const DEFAULT_OPPONENT_RATING_BUCKET_SIZE = 100;
 type TimeClassOption = {
   readonly timeClass?: TimeClass;
+};
+type PlayerColorOption = {
+  readonly playerColor?: PlayerColor;
 };
 
 export async function analyzeChessComPlayer(
@@ -53,6 +58,7 @@ export function buildPlayerAnalysis(
     filters: {
       timeClass: options.timeClass ?? null,
       ratingTimeClass,
+      openingPlayerColor: options.openingPlayerColor ?? null,
       openingLimit,
       opponentRatingBucketSize
     },
@@ -64,6 +70,7 @@ export function buildPlayerAnalysis(
       skippedArchiveUrls: importResult.skippedArchiveUrls
     },
     aggregates: {
+      summary: buildPlayerSummary(importResult.records, aggregateTimeClassOption),
       results: buildResultBreakdown(importResult.records, aggregateTimeClassOption),
       resultsByTimeClass: buildResultsByTimeClass(importResult.records),
       timeClasses: buildTimeClassBreakdown(importResult.records),
@@ -77,14 +84,20 @@ export function buildPlayerAnalysis(
       }),
       openingSummary: buildOpeningSummary(importResult.records, {
         limit: openingLimit,
+        ...toPlayerColorOption(options.openingPlayerColor),
         ...aggregateTimeClassOption
-      })
+      }),
+      endingBreakdowns: buildEndingBreakdowns(importResult.records, aggregateTimeClassOption)
     }
   };
 }
 
 function toTimeClassOption(timeClass: TimeClass | undefined): TimeClassOption {
   return timeClass === undefined ? {} : { timeClass };
+}
+
+function toPlayerColorOption(playerColor: PlayerColor | undefined): PlayerColorOption {
+  return playerColor === undefined ? {} : { playerColor };
 }
 
 function buildResultsByTimeClass(records: ChessComImportResult["records"]): ResultsByTimeClass {

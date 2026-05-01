@@ -3,6 +3,7 @@ import type { NormalizedGameRecord } from "@chessinsights/domain";
 import {
   compareByCountDescThenNameAsc,
   emptyResultCounts,
+  filterByPlayerColor,
   filterByTimeClass,
   incrementResult,
   toPercentages
@@ -15,8 +16,9 @@ export function buildOpeningSummary(
 ): OpeningSummaryEntry[] {
   const limit = validateLimit(options.limit);
   const entriesByFamily = new Map<string, OpeningSummaryEntry>();
+  const recordsByTimeClass = filterByTimeClass(records, options.timeClass);
 
-  for (const record of filterByTimeClass(records, options.timeClass)) {
+  for (const record of filterByPlayerColor(recordsByTimeClass, options.playerColor)) {
     const existingEntry = entriesByFamily.get(record.openingFamily) ?? {
       openingFamily: record.openingFamily,
       counts: emptyResultCounts(),
@@ -49,4 +51,3 @@ function validateLimit(limit: number | undefined): number | undefined {
 
   return limit;
 }
-

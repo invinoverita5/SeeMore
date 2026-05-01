@@ -1,7 +1,11 @@
-import type { NormalizedGameRecord, TimeClass } from "@chessinsights/domain";
+import type { EndingCategory, NormalizedGameRecord, NormalizedResult, PlayerColor, TimeClass } from "@chessinsights/domain";
 
 export interface TimeClassFilter {
   readonly timeClass?: TimeClass;
+}
+
+export interface PlayerColorFilter {
+  readonly playerColor?: PlayerColor;
 }
 
 export interface ResultCounts {
@@ -30,6 +34,7 @@ export interface TimeClassBreakdownEntry {
 export interface RatingTimelinePoint {
   readonly playedAt: string;
   readonly rating: number;
+  readonly result: NormalizedResult;
   readonly gameUrl: string;
   readonly timeClass: TimeClass;
 }
@@ -59,8 +64,28 @@ export interface OpeningSummaryEntry {
   readonly percentages: ResultPercentages;
 }
 
-export interface OpeningSummaryOptions extends TimeClassFilter {
+export interface OpeningSummaryOptions extends TimeClassFilter, PlayerColorFilter {
   readonly limit?: number;
+}
+
+export interface PlayerSummary {
+  readonly totalGames: number;
+  readonly results: ResultBreakdown;
+  readonly estimatedTimePlayedSeconds: number;
+  readonly skippedEstimatedTimeGames: number;
+}
+
+export interface EndingBreakdownEntry {
+  readonly ending: EndingCategory;
+  readonly label: string;
+  readonly count: number;
+  readonly percentage: number;
+}
+
+export interface EndingBreakdowns {
+  readonly wonBy: readonly EndingBreakdownEntry[];
+  readonly lostBy: readonly EndingBreakdownEntry[];
+  readonly drawnBy: readonly EndingBreakdownEntry[];
 }
 
 export type AnalyticsInput = readonly NormalizedGameRecord[];

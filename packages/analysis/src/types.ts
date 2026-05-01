@@ -1,11 +1,13 @@
 import type {
+  EndingBreakdowns,
   OpeningSummaryEntry,
   OpponentRatingBucketsResult,
+  PlayerSummary,
   RatingTimelinePoint,
   ResultBreakdown,
   TimeClassBreakdownEntry
 } from "@chessinsights/analytics";
-import type { TimeClass } from "@chessinsights/domain";
+import type { PlayerColor, TimeClass } from "@chessinsights/domain";
 import type {
   ChessComImportResult,
   ChessComProfile,
@@ -15,8 +17,9 @@ import type {
 
 export interface PlayerAnalysisOptions extends ImportOptions {
   readonly openingLimit?: number;
+  readonly openingPlayerColor?: PlayerColor;
   readonly opponentRatingBucketSize?: number;
-  readonly ratingTimeClass?: TimeClass;
+  readonly ratingTimeClass?: TimeClass | null;
   readonly timeClass?: TimeClass;
 }
 
@@ -24,6 +27,7 @@ export type ResultsByTimeClass = Record<TimeClass, ResultBreakdown>;
 
 export interface PlayerAnalysisFilters {
   readonly openingLimit: number;
+  readonly openingPlayerColor: PlayerColor | null;
   readonly opponentRatingBucketSize: number;
   readonly ratingTimeClass: TimeClass | null;
   readonly timeClass: TimeClass | null;
@@ -43,11 +47,13 @@ export interface RatingTimelineAnalysis {
 }
 
 export interface PlayerAnalysisAggregates {
+  readonly endingBreakdowns: EndingBreakdowns;
   readonly openingSummary: readonly OpeningSummaryEntry[];
   readonly opponentRatingBuckets: OpponentRatingBucketsResult;
   readonly ratingTimeline: RatingTimelineAnalysis;
   readonly results: ResultBreakdown;
   readonly resultsByTimeClass: ResultsByTimeClass;
+  readonly summary: PlayerSummary;
   readonly timeClasses: readonly TimeClassBreakdownEntry[];
 }
 

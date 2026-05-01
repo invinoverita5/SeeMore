@@ -1,9 +1,10 @@
 import type { PlayerAnalysisOptions } from "@chessinsights/analysis";
 import { ChessComApiError, normalizeChessComUsername } from "@chessinsights/chesscom-client";
 import type { ProviderErrorKind } from "@chessinsights/chesscom-client";
-import type { TimeClass } from "@chessinsights/domain";
+import type { PlayerColor, TimeClass } from "@chessinsights/domain";
 
 const TIME_CLASSES = new Set<TimeClass>(["bullet", "blitz", "rapid", "daily"]);
+const PLAYER_COLORS = new Set<PlayerColor>(["white", "black"]);
 
 export interface ParsedAnalyzeRequest extends PlayerAnalysisOptions {
   readonly username: string;
@@ -39,7 +40,8 @@ export function parseAnalyzeSearchParams(searchParams: URLSearchParams): ParsedA
 
   const username = normalizeUsername(rawUsername);
   const timeClass = parseTimeClass(searchParams, "timeClass");
-  const ratingTimeClass = parseTimeClass(searchParams, "ratingTimeClass");
+  const ratingTimeClass = parseRatingTimeClass(searchParams, "ratingTimeClass");
+  const openingPlayerColor = parsePlayerColor(searchParams, "openingPlayerColor");
   const openingLimit = parsePositiveInteger(searchParams, "openingLimit", {
     max: 25
   });
@@ -51,6 +53,7 @@ export function parseAnalyzeSearchParams(searchParams: URLSearchParams): ParsedA
     username,
     ...(timeClass === undefined ? {} : { timeClass }),
     ...(ratingTimeClass === undefined ? {} : { ratingTimeClass }),
+    ...(openingPlayerColor === undefined ? {} : { openingPlayerColor }),
     ...(openingLimit === undefined ? {} : { openingLimit }),
     ...(opponentRatingBucketSize === undefined ? {} : { opponentRatingBucketSize })
   };
@@ -106,7 +109,44 @@ function normalizeUsername(rawUsername: string): string {
   }
 }
 
-function parseTimeClass(searchParams: URLSearchParams, key: "ratingTimeClass" | "timeClass"): TimeClass | undefined {
+function parseTimeClass(searchParams: URLSearchParams, key: "timeClass"): TimeClass | undefined {
+  const value = searchParams.get(key);
+
+  if (value === null) {
+    return undefined;
+  }
+
+  return parseTimeClassValue(value, key) ?? undefined;
+}
+
+function parseRatingTimeClass(
+  searchParams: URLSearchParams,
+  key: "ratingTimeClass"
+): TimeClass | null | undefined {
+  const value = searchParams.get(key);
+
+  if (value === null) {
+    return undefined;
+  }
+
+  return parseTimeClassValue(value, key);
+}
+
+function parseTimeClassValue(value: string, key: "ratingTimeClass" | "timeClass"): TimeClass | null {
+  const normalizedValue = value.trim().toLowerCase();
+
+  if (normalizedValue.length === 0 || normalizedValue === "all") {
+    return null;
+  }
+
+  if (!TIME_CLASSES.has(normalizedValue as TimeClass)) {
+    throw new AnalyzeRequestError(`${key} must be one of bullet, blitz, rapid, or daily.`);
+  }
+
+  return normalizedValue as TimeClass;
+}
+
+function parsePlayerColor(searchParams: URLSearchParams, key: "openingPlayerColor"): PlayerColor | undefined {
   const value = searchParams.get(key);
 
   if (value === null) {
@@ -119,11 +159,11 @@ function parseTimeClass(searchParams: URLSearchParams, key: "ratingTimeClass" | 
     return undefined;
   }
 
-  if (!TIME_CLASSES.has(normalizedValue as TimeClass)) {
-    throw new AnalyzeRequestError(`${key} must be one of bullet, blitz, rapid, or daily.`);
+  if (!PLAYER_COLORS.has(normalizedValue as PlayerColor)) {
+    throw new AnalyzeRequestError(`${key} must be white or black.`);
   }
 
-  return normalizedValue as TimeClass;
+  return normalizedValue as PlayerColor;
 }
 
 function parsePositiveInteger(

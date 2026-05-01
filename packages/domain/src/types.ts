@@ -28,6 +28,7 @@ export interface ChessComSide {
 export interface ChessComGame {
   readonly url: string;
   readonly pgn: string;
+  readonly time_control?: string;
   readonly time_class?: string;
   readonly rules?: string;
   readonly end_time?: number;
@@ -51,11 +52,12 @@ export interface NormalizedGameRecord {
   readonly rawOpponentResult: string;
   readonly rawRules: string;
   readonly rawTimeClass: string;
+  readonly rawTimeControl: string;
   readonly openingName: string;
   readonly openingFamily: string;
   readonly playedAt: string | null;
   readonly moveCount: number;
   readonly plyCount: number;
+  readonly estimatedTimePlayedSeconds: number | null;
   readonly rated: boolean | null;
 }
-

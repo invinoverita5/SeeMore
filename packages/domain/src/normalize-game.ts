@@ -24,6 +24,7 @@ export function normalizeChessComGame(game: ChessComGame, username: string): Nor
   const openingName = extractOpeningName(game.pgn, game.eco);
   const plyCount = countPlyFromPgn(game.pgn);
   const moveCount = Math.ceil(plyCount / 2);
+  const rawTimeControl = game.time_control?.trim() ?? "";
 
   return {
     gameUrl: game.url,
@@ -39,11 +40,13 @@ export function normalizeChessComGame(game: ChessComGame, username: string): Nor
     rawOpponentResult: opponentResult,
     rawRules,
     rawTimeClass,
+    rawTimeControl,
     openingName,
     openingFamily: toOpeningFamily(openingName),
     playedAt: getPlayedAt(game),
     moveCount,
     plyCount,
+    estimatedTimePlayedSeconds: estimateTimePlayedSeconds(rawTimeControl, perspective.color, plyCount),
     rated: game.rated ?? null
   };
 }
@@ -104,4 +107,22 @@ function getPlayedAt(game: ChessComGame): string | null {
   }
 
   return parsedDate.toISOString();
+}
+
+function estimateTimePlayedSeconds(
+  rawTimeControl: string,
+  playerColor: PlayerColor,
+  plyCount: number
+): number | null {
+  const match = /^(\d+)(?:\+(\d+))?$/.exec(rawTimeControl);
+
+  if (match === null) {
+    return null;
+  }
+
+  const baseSeconds = Number(match[1]);
+  const incrementSeconds = match[2] === undefined ? 0 : Number(match[2]);
+  const playerMoveCount = playerColor === "white" ? Math.ceil(plyCount / 2) : Math.floor(plyCount / 2);
+
+  return baseSeconds + incrementSeconds * playerMoveCount;
 }

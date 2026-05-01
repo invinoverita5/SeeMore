@@ -57,8 +57,25 @@ describe("analyzeChessComPlayer", () => {
     expect(analysis.filters).toEqual({
       opponentRatingBucketSize: 100,
       openingLimit: 10,
+      openingPlayerColor: null,
       ratingTimeClass: "blitz",
       timeClass: null
+    });
+    expect(analysis.aggregates.summary).toEqual({
+      totalGames: 3,
+      results: {
+        total: 3,
+        win: 1,
+        loss: 1,
+        draw: 1,
+        percentages: {
+          win: 33.3,
+          loss: 33.3,
+          draw: 33.3
+        }
+      },
+      estimatedTimePlayedSeconds: 900,
+      skippedEstimatedTimeGames: 1
     });
     expect(analysis.aggregates.results).toMatchObject({
       total: 3,
@@ -103,6 +120,7 @@ describe("analyzeChessComPlayer", () => {
         {
           playedAt: "2024-01-15T08:26:40.000Z",
           rating: 1350,
+          result: "win",
           gameUrl: "https://www.chess.com/game/live/1001",
           timeClass: "blitz"
         }
@@ -133,6 +151,10 @@ describe("analyzeChessComPlayer", () => {
       "Queen's Pawn Opening",
       "Sicilian Defense"
     ]);
+    expect(analysis.aggregates.endingBreakdowns.wonBy.find((entry) => entry.ending === "resignation")).toMatchObject({
+      count: 1,
+      percentage: 100
+    });
   });
 
   it("supports time-class filters and explicit rating timelines", async () => {
@@ -147,6 +169,7 @@ describe("analyzeChessComPlayer", () => {
     expect(analysis.filters).toEqual({
       opponentRatingBucketSize: 100,
       openingLimit: 1,
+      openingPlayerColor: null,
       ratingTimeClass: "rapid",
       timeClass: "rapid"
     });
@@ -158,12 +181,42 @@ describe("analyzeChessComPlayer", () => {
       {
         playedAt: "2024-01-16T18:44:11.000Z",
         rating: 1402,
+        result: "loss",
         gameUrl: "https://www.chess.com/game/live/1002",
         timeClass: "rapid"
       }
     ]);
     expect(analysis.aggregates.openingSummary).toHaveLength(1);
     expect(analysis.aggregates.openingSummary[0]?.openingFamily).toBe("Italian Game");
+  });
+
+  it("supports opening color perspective filters", async () => {
+    const client = createMockClient();
+
+    const analysis = await analyzeChessComPlayer(client, "testuser", {
+      openingPlayerColor: "white"
+    });
+
+    expect(analysis.filters.openingPlayerColor).toBe("white");
+    expect(analysis.aggregates.openingSummary.map((entry) => entry.openingFamily)).toEqual([
+      "Queen's Pawn Opening",
+      "Sicilian Defense"
+    ]);
+  });
+
+  it("supports explicit all-time-class rating timelines", async () => {
+    const client = createMockClient();
+
+    const analysis = await analyzeChessComPlayer(client, "testuser", {
+      ratingTimeClass: null
+    });
+
+    expect(analysis.filters.ratingTimeClass).toBeNull();
+    expect(analysis.aggregates.ratingTimeline.points.map((point) => point.gameUrl)).toEqual([
+      "https://www.chess.com/game/live/1001",
+      "https://www.chess.com/game/live/1002",
+      "https://www.chess.com/game/daily/1003"
+    ]);
   });
 });
 

@@ -52,11 +52,13 @@ describe("normalizeChessComGame", () => {
       rawOpponentResult: "resigned",
       rawRules: "chess",
       rawTimeClass: "blitz",
+      rawTimeControl: "300",
       openingName: "Sicilian Defense Najdorf Variation",
       openingFamily: "Sicilian Defense",
       playedAt: "2024-01-15T08:26:40.000Z",
       moveCount: 5,
       plyCount: 10,
+      estimatedTimePlayedSeconds: 300,
       rated: true
     });
   });
@@ -90,6 +92,23 @@ describe("normalizeChessComGame", () => {
       rawPlayerResult: "stalemate",
       rawOpponentResult: "stalemate",
       timeClass: "daily"
+    });
+  });
+
+  it("estimates player clock time from live time controls and leaves daily controls unknown", () => {
+    const liveGame = {
+      ...fixtureGame(0),
+      time_control: "180+2"
+    };
+    const dailyGame = fixtureGame(2);
+
+    expect(normalizeChessComGame(liveGame, "testuser")).toMatchObject({
+      rawTimeControl: "180+2",
+      estimatedTimePlayedSeconds: 190
+    });
+    expect(normalizeChessComGame(dailyGame, "testuser")).toMatchObject({
+      rawTimeControl: "1/259200",
+      estimatedTimePlayedSeconds: null
     });
   });
 

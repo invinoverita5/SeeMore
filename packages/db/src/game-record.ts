@@ -26,6 +26,8 @@ export function toGameWriteModel(input: GameWriteInput): GameWriteModel {
     rawOpponentResult: input.record.rawOpponentResult,
     rawRules: input.record.rawRules,
     rawTimeClass: input.record.rawTimeClass,
+    rawTimeControl: input.record.rawTimeControl,
+    estimatedTimePlayedSeconds: input.record.estimatedTimePlayedSeconds,
     openingName: input.record.openingName,
     openingFamily: input.record.openingFamily,
     openingTaxonomyVersion,

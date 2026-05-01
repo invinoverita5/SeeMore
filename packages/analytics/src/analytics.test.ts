@@ -9,6 +9,8 @@ import { buildOpeningSummary } from "./openings.js";
 import { buildOpponentRatingBuckets } from "./opponent-buckets.js";
 import { buildRatingTimeline } from "./rating-timeline.js";
 import { buildResultBreakdown } from "./results.js";
+import { buildEndingBreakdowns } from "./endings.js";
+import { buildPlayerSummary } from "./summary.js";
 import { buildTimeClassBreakdown, getMostPlayedTimeClass } from "./time-classes.js";
 
 const fixturePath = resolve(
@@ -87,23 +89,140 @@ describe("analytics aggregations", () => {
     ]);
   });
 
+  it("builds player summary totals and estimated time played", () => {
+    expect(buildPlayerSummary(normalizedFixtureRecords())).toEqual({
+      totalGames: 3,
+      results: {
+        total: 3,
+        win: 1,
+        loss: 1,
+        draw: 1,
+        percentages: {
+          win: 33.3,
+          loss: 33.3,
+          draw: 33.3
+        }
+      },
+      estimatedTimePlayedSeconds: 900,
+      skippedEstimatedTimeGames: 1
+    });
+  });
+
+  it("groups endings by result for donut charts", () => {
+    expect(buildEndingBreakdowns(normalizedFixtureRecords())).toEqual({
+      wonBy: [
+        {
+          ending: "abandoned",
+          label: "Abandonment",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "checkmate",
+          label: "Checkmate",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "resignation",
+          label: "Resignation",
+          count: 1,
+          percentage: 100
+        },
+        {
+          ending: "timeout",
+          label: "Timeout",
+          count: 0,
+          percentage: 0
+        }
+      ],
+      lostBy: [
+        {
+          ending: "abandoned",
+          label: "Abandonment",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "checkmate",
+          label: "Checkmate",
+          count: 1,
+          percentage: 100
+        },
+        {
+          ending: "resignation",
+          label: "Resignation",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "timeout",
+          label: "Timeout",
+          count: 0,
+          percentage: 0
+        }
+      ],
+      drawnBy: [
+        {
+          ending: "agreement",
+          label: "Agreement",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "stalemate",
+          label: "Stalemate",
+          count: 1,
+          percentage: 100
+        },
+        {
+          ending: "repetition",
+          label: "Repetition",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "insufficient_material",
+          label: "Insufficient material",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "fifty_move",
+          label: "50-move rule",
+          count: 0,
+          percentage: 0
+        },
+        {
+          ending: "time_vs_insufficient_material",
+          label: "Time vs insufficient material",
+          count: 0,
+          percentage: 0
+        }
+      ]
+    });
+  });
+
   it("builds a rating timeline sorted by played date", () => {
     expect(buildRatingTimeline(normalizedFixtureRecords())).toEqual([
       {
         playedAt: "2024-01-15T08:26:40.000Z",
         rating: 1350,
+        result: "win",
         gameUrl: "https://www.chess.com/game/live/1001",
         timeClass: "blitz"
       },
       {
         playedAt: "2024-01-16T18:44:11.000Z",
         rating: 1402,
+        result: "loss",
         gameUrl: "https://www.chess.com/game/live/1002",
         timeClass: "rapid"
       },
       {
         playedAt: "2024-01-17T12:00:00.000Z",
         rating: 1510,
+        result: "draw",
         gameUrl: "https://www.chess.com/game/daily/1003",
         timeClass: "daily"
       }
@@ -115,6 +234,7 @@ describe("analytics aggregations", () => {
       {
         playedAt: "2024-01-15T08:26:40.000Z",
         rating: 1350,
+        result: "win",
         gameUrl: "https://www.chess.com/game/live/1001",
         timeClass: "blitz"
       }
@@ -251,8 +371,17 @@ describe("analytics aggregations", () => {
     ]);
   });
 
+  it("filters opening summaries by player color", () => {
+    expect(buildOpeningSummary(normalizedFixtureRecords(), { playerColor: "white" }).map((entry) => entry.openingFamily)).toEqual([
+      "Queen's Pawn Opening",
+      "Sicilian Defense"
+    ]);
+    expect(buildOpeningSummary(normalizedFixtureRecords(), { playerColor: "black" }).map((entry) => entry.openingFamily)).toEqual([
+      "Italian Game"
+    ]);
+  });
+
   it("rejects invalid opening summary limits", () => {
     expect(() => buildOpeningSummary(normalizedFixtureRecords(), { limit: -1 })).toThrow(TypeError);
   });
 });
-

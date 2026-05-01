@@ -19,6 +19,7 @@ export interface AggregateFilterInput {
   readonly bucketSize?: number;
   readonly from?: string;
   readonly limit?: number;
+  readonly playerColor?: PlayerColor;
   readonly timeClass?: TimeClass;
   readonly to?: string;
 }
@@ -45,6 +46,8 @@ export interface GameWriteModel {
   readonly rawOpponentResult: string;
   readonly rawRules: string;
   readonly rawTimeClass: string;
+  readonly rawTimeControl: string;
+  readonly estimatedTimePlayedSeconds: number | null;
   readonly openingName: string;
   readonly openingFamily: string;
   readonly openingTaxonomyVersion: string;

@@ -81,6 +81,12 @@ describe("AnalyzeDashboard", () => {
 
     expect(await screen.findByText("testuser")).toBeTruthy();
 
+    fireEvent.change(screen.getByLabelText("Chess.com username"), {
+      target: {
+        value: "otheruser"
+      }
+    });
+
     const blitzButton = screen.getByRole("button", { name: "blitz" });
     fireEvent.click(blitzButton);
 

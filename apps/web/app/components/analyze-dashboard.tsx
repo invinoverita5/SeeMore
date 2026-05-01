@@ -10,7 +10,7 @@ import type {
 import type { PlayerAnalysis } from "@chessinsights/analysis";
 import type { PlayerColor, TimeClass } from "@chessinsights/domain";
 import type { FormEvent, PointerEvent } from "react";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 type TimeClassFilter = TimeClass | "all";
 type PlayerColorFilter = PlayerColor | "all";
@@ -43,6 +43,7 @@ export function AnalyzeDashboard() {
   const [username, setUsername] = useState("");
   const [activeTimeClass, setActiveTimeClass] = useState<TimeClassFilter>("all");
   const [activeOpeningPlayerColor, setActiveOpeningPlayerColor] = useState<PlayerColorFilter>("all");
+  const [analyzedUsername, setAnalyzedUsername] = useState<string | null>(null);
   const [analysis, setAnalysis] = useState<PlayerAnalysis | null>(null);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,11 +53,13 @@ export function AnalyzeDashboard() {
 
   async function submitAnalysis(
     nextTimeClass: TimeClassFilter = activeTimeClass,
-    nextOpeningPlayerColor: PlayerColorFilter = activeOpeningPlayerColor
+    nextOpeningPlayerColor: PlayerColorFilter = activeOpeningPlayerColor,
+    targetUsername = username
   ) {
-    const trimmedUsername = username.trim();
+    const trimmedUsername = targetUsername.trim();
 
     if (trimmedUsername.length === 0) {
+      setAnalyzedUsername(null);
       setAnalysis(null);
       setErrorMessage("Enter a Chess.com username.");
       return;
@@ -91,7 +94,9 @@ export function AnalyzeDashboard() {
       }
 
       setAnalysis(payload.analysis);
+      setAnalyzedUsername(payload.analysis.username);
     } catch (error) {
+      setAnalyzedUsername(null);
       setAnalysis(null);
       setErrorMessage(error instanceof Error ? error.message : "Analysis failed.");
     } finally {
@@ -107,16 +112,16 @@ export function AnalyzeDashboard() {
   function selectTimeClass(timeClass: TimeClassFilter) {
     setActiveTimeClass(timeClass);
 
-    if (hasAnalysis) {
-      void submitAnalysis(timeClass, activeOpeningPlayerColor);
+    if (hasAnalysis && analyzedUsername !== null) {
+      void submitAnalysis(timeClass, activeOpeningPlayerColor, analyzedUsername);
     }
   }
 
   function selectOpeningPlayerColor(playerColor: PlayerColorFilter) {
     setActiveOpeningPlayerColor(playerColor);
 
-    if (hasAnalysis) {
-      void submitAnalysis(activeTimeClass, playerColor);
+    if (hasAnalysis && analyzedUsername !== null) {
+      void submitAnalysis(activeTimeClass, playerColor, analyzedUsername);
     }
   }
 
@@ -269,16 +274,23 @@ function RatingLineChart({ points }: { readonly points: readonly RatingTimelineP
   const normalizedZoomRange = normalizeZoomRange(zoomRange, points.length);
   const visiblePoints =
     normalizedZoomRange === null ? points : points.slice(normalizedZoomRange.start, normalizedZoomRange.end + 1);
+  const zoomStartOffset = normalizedZoomRange?.start ?? 0;
   const chartPoints = useMemo(() => buildRatingChartPoints(visiblePoints), [visiblePoints]);
   const path = chartPoints.map((point) => `${point.x},${point.y}`).join(" ");
-  const brush = buildBrush(dragStart, dragEnd, points.length);
+  const brush = buildBrush(dragStart, dragEnd, visiblePoints.length);
+
+  useEffect(() => {
+    setZoomRange(null);
+    setDragStart(null);
+    setDragEnd(null);
+  }, [points]);
 
   function handlePointerDown(event: PointerEvent<SVGSVGElement>) {
-    if (points.length < 2) {
+    if (visiblePoints.length < 2) {
       return;
     }
 
-    const index = indexFromPointer(event, points.length);
+    const index = indexFromPointer(event, visiblePoints.length);
     setDragStart(index);
     setDragEnd(index);
     event.currentTarget.setPointerCapture(event.pointerId);
@@ -289,7 +301,7 @@ function RatingLineChart({ points }: { readonly points: readonly RatingTimelineP
       return;
     }
 
-    setDragEnd(indexFromPointer(event, points.length));
+    setDragEnd(indexFromPointer(event, visiblePoints.length));
   }
 
   function handlePointerUp(event: PointerEvent<SVGSVGElement>) {
@@ -303,7 +315,10 @@ function RatingLineChart({ points }: { readonly points: readonly RatingTimelineP
     const end = Math.max(dragStart, dragEnd);
 
     if (end - start >= 1) {
-      setZoomRange({ start, end });
+      setZoomRange({
+        start: zoomStartOffset + start,
+        end: zoomStartOffset + end
+      });
     }
 
     setDragStart(null);

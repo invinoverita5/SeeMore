@@ -203,6 +203,21 @@ describe("analyzeChessComPlayer", () => {
       "Sicilian Defense"
     ]);
   });
+
+  it("supports explicit all-time-class rating timelines", async () => {
+    const client = createMockClient();
+
+    const analysis = await analyzeChessComPlayer(client, "testuser", {
+      ratingTimeClass: null
+    });
+
+    expect(analysis.filters.ratingTimeClass).toBeNull();
+    expect(analysis.aggregates.ratingTimeline.points.map((point) => point.gameUrl)).toEqual([
+      "https://www.chess.com/game/live/1001",
+      "https://www.chess.com/game/live/1002",
+      "https://www.chess.com/game/daily/1003"
+    ]);
+  });
 });
 
 interface MockImportClient extends ChessComImportClient {

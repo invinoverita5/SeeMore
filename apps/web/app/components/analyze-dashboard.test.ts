@@ -90,7 +90,7 @@ describe("AnalyzeDashboard", () => {
 
     expect(blitzButton.getAttribute("aria-pressed")).toBe("true");
     expect(fetchMock.mock.calls[1]?.[0].toString()).toBe(
-      "/api/analyze?username=testuser&timeClass=blitz&ratingTimeClass=blitz"
+      "/api/analyze?username=testuser&ratingTimeClass=blitz&timeClass=blitz"
     );
     expect(await screen.findByText("testuser-blitz")).toBeTruthy();
   });
@@ -111,7 +111,9 @@ describe("AnalyzeDashboard", () => {
       expect(fetchMock).toHaveBeenCalledTimes(2);
     });
 
-    expect(fetchMock.mock.calls[1]?.[0].toString()).toBe("/api/analyze?username=testuser&openingPlayerColor=white");
+    expect(fetchMock.mock.calls[1]?.[0].toString()).toBe(
+      "/api/analyze?username=testuser&ratingTimeClass=all&openingPlayerColor=white"
+    );
     expect(await screen.findByText("testuser-white")).toBeTruthy();
   });
 });

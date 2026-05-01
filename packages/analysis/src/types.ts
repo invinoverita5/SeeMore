@@ -19,7 +19,7 @@ export interface PlayerAnalysisOptions extends ImportOptions {
   readonly openingLimit?: number;
   readonly openingPlayerColor?: PlayerColor;
   readonly opponentRatingBucketSize?: number;
-  readonly ratingTimeClass?: TimeClass;
+  readonly ratingTimeClass?: TimeClass | null;
   readonly timeClass?: TimeClass;
 }
 

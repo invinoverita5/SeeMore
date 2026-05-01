@@ -40,7 +40,7 @@ export function buildPlayerAnalysis(
   options: PlayerAnalysisOptions = {}
 ): PlayerAnalysis {
   const defaultTimeClass = getMostPlayedTimeClass(importResult.records);
-  const ratingTimeClass = options.ratingTimeClass ?? defaultTimeClass;
+  const ratingTimeClass = options.ratingTimeClass === undefined ? defaultTimeClass : options.ratingTimeClass;
   const openingLimit = options.openingLimit ?? DEFAULT_OPENING_LIMIT;
   const opponentRatingBucketSize = options.opponentRatingBucketSize ?? DEFAULT_OPPONENT_RATING_BUCKET_SIZE;
   const aggregateTimeClassOption = toTimeClassOption(options.timeClass);

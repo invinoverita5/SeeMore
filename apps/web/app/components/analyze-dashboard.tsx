@@ -71,9 +71,10 @@ export function AnalyzeDashboard() {
         username: trimmedUsername
       });
 
+      params.set("ratingTimeClass", nextTimeClass);
+
       if (nextTimeClass !== "all") {
         params.set("timeClass", nextTimeClass);
-        params.set("ratingTimeClass", nextTimeClass);
       }
 
       if (nextOpeningPlayerColor !== "all") {
@@ -518,9 +519,9 @@ function DonutChart({ entries }: { readonly entries: readonly EndingBreakdownEnt
         </text>
       </svg>
       <div className="donut-legend">
-        {entries.map((entry, index) => (
+        {entries.map((entry) => (
           <div key={entry.ending} className="legend-row">
-            <span style={{ background: DONUT_COLORS[index % DONUT_COLORS.length] }} />
+            <span style={{ background: donutLegendColor(entry, positiveEntries) }} />
             <small>{entry.label}</small>
             <strong>{formatInteger(entry.count)}</strong>
           </div>
@@ -528,6 +529,15 @@ function DonutChart({ entries }: { readonly entries: readonly EndingBreakdownEnt
       </div>
     </div>
   );
+}
+
+function donutLegendColor(
+  entry: EndingBreakdownEntry,
+  positiveEntries: readonly EndingBreakdownEntry[]
+): string {
+  const segmentIndex = positiveEntries.findIndex((positiveEntry) => positiveEntry.ending === entry.ending);
+
+  return segmentIndex === -1 ? "#e5ebe2" : (DONUT_COLORS[segmentIndex % DONUT_COLORS.length] ?? "#e5ebe2");
 }
 
 function PanelHeader({ title, value }: { readonly title: string; readonly value: string }) {

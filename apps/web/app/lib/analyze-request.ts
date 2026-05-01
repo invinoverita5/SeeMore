@@ -40,7 +40,7 @@ export function parseAnalyzeSearchParams(searchParams: URLSearchParams): ParsedA
 
   const username = normalizeUsername(rawUsername);
   const timeClass = parseTimeClass(searchParams, "timeClass");
-  const ratingTimeClass = parseTimeClass(searchParams, "ratingTimeClass");
+  const ratingTimeClass = parseRatingTimeClass(searchParams, "ratingTimeClass");
   const openingPlayerColor = parsePlayerColor(searchParams, "openingPlayerColor");
   const openingLimit = parsePositiveInteger(searchParams, "openingLimit", {
     max: 25
@@ -109,17 +109,34 @@ function normalizeUsername(rawUsername: string): string {
   }
 }
 
-function parseTimeClass(searchParams: URLSearchParams, key: "ratingTimeClass" | "timeClass"): TimeClass | undefined {
+function parseTimeClass(searchParams: URLSearchParams, key: "timeClass"): TimeClass | undefined {
   const value = searchParams.get(key);
 
   if (value === null) {
     return undefined;
   }
 
+  return parseTimeClassValue(value, key) ?? undefined;
+}
+
+function parseRatingTimeClass(
+  searchParams: URLSearchParams,
+  key: "ratingTimeClass"
+): TimeClass | null | undefined {
+  const value = searchParams.get(key);
+
+  if (value === null) {
+    return undefined;
+  }
+
+  return parseTimeClassValue(value, key);
+}
+
+function parseTimeClassValue(value: string, key: "ratingTimeClass" | "timeClass"): TimeClass | null {
   const normalizedValue = value.trim().toLowerCase();
 
   if (normalizedValue.length === 0 || normalizedValue === "all") {
-    return undefined;
+    return null;
   }
 
   if (!TIME_CLASSES.has(normalizedValue as TimeClass)) {

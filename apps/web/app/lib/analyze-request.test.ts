@@ -37,7 +37,8 @@ describe("parseAnalyzeSearchParams", () => {
     );
 
     expect(parsed).toEqual({
-      username: "testuser"
+      username: "testuser",
+      ratingTimeClass: null
     });
   });
 
